@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import AddExpense from "./components/AddExpense";
+import ExpenseList from "./components/ExpenseList";
+import FilterExpenses from "./components/FilterExpense";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import Chart from "./components/Chart";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [expenses, setExpenses] = useLocalStorage("expenses", []);
+  const [filter, setFilter] = useState({ category: "All" });
+
+  const addExpense = (expense) => {
+    setExpenses([...expenses, expense]);
+  };
+
+  const deleteExpense = (id) => {
+    setExpenses(expenses.filter((expense) => expense.id !== id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="header">
+        <h1>Expense Tracker</h1>
+        <p>Manage your expenses effectively</p>
+      </div>
+      <div className="main-container">
+        <div className="form-container">
+          <AddExpense addExpense={addExpense} />
+          <ExpenseList
+            expenses={expenses}
+            filter={filter}
+            deleteExpense={deleteExpense}
+          />
+        </div>
+        <div className="chart-container">
+          <FilterExpenses setFilter={setFilter} />
+          <Chart expenses={expenses} />
+        </div>
+      </div>
+    </>
   );
-}
+};
 
 export default App;
